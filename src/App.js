@@ -5,7 +5,7 @@ import Printa from './Printa';
 
 function App() {
   
-
+/* 1221212121 */
  const [pokemons, setPokemons] = useState([])
  const [omegaHook, setOmegaHook] = useState(true)
 
