@@ -1,131 +1,96 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-/* import './App.scss'; */
-import Printa from './Printa';
+import StudentsList from './StudentsList';
+import EditStudent from './EditStudent';
 
 function App() {
-  
-/* 1221212121 */
- const [pokemons, setPokemons] = useState([])
- const [omegaHook, setOmegaHook] = useState(true)
+  const [students, setStudents] = useState([])
+  const [viewSwitch, setViewSwitch] = useState(true)
 
- 
+  function switchView() {
+    setViewSwitch(!viewSwitch);
+  }
+
   useEffect(() => {
-    async function fetchPokemons(){
+    async function fetchStudents() {
       const resp = await fetch('http://localhost:8080/api/students')
-      
-      if (resp.status===204) {
-        setPokemons([]);
-        
+
+      if (resp.status === 204) {
+        setStudents([]);
       } else {
-        const pokemon = await resp.json()
-        const pokemon50 = [...pokemon];
-        setPokemons(pokemon50);
+        const students = await resp.json()
+        setStudents(students);
       }
-      
+
     }
-    fetchPokemons();
-    console.log(pokemons);      
-  },[omegaHook]);
+    fetchStudents();
+    console.log(students);
+  }, []);
 
-  function callOmegaHook(){
-    setOmegaHook(!omegaHook)
-  }
- 
-  function removePokemon(x){  
-   /* let omega = Math.floor(Math.random()* 10000000000); */
-    async function fetchDel(){
-      const resp = await fetch(`http://localhost:8080/api/student/${pokemons[x].student_id}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' }
-      })
-      if (resp.ok){
-          callOmegaHook();
-      }
-    }
-    fetchDel();    
-  }
-
-
-
-  function addUser(Xfirstname, Xlastname, Xage, Ypresent){
-  /* let omega = Math.floor(Math.random()* 10000000000); */
-    async function fetchAdd(){
+  function addStudent(name, lastName, age, present) {
+    async function fetchAdd() {
       const resp = await fetch('http://localhost:8080/api/student', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: Xfirstname,
-          last_name: Xlastname,
-          age: Xage,          
-          present: Ypresent
-        })          
+          name: name,
+          last_name: lastName,
+          age: age,
+          present: present
+        })
       })
-      if(resp.status===201){
-        callOmegaHook();
-      }else{
+      if (resp.status === 201) {
+
+      } else {
         alert("Fail to add, check your input")
-      }                
+      }
     }
-    fetchAdd(); 
-          
+    fetchAdd();
   }
 
-
-
-  function checkBoxChanged(i, h){
-   
-    /* let omega = Math.floor(Math.random()* 10000000000); */
-    async function fetchCheck(){
-      const resp = await fetch(`http://localhost:8080/api/student/${pokemons[i].student_id}`, {
+  function updateStudent(i, name, lastName, age, present) {
+    async function fetchUpdate() {
+      const resp = await fetch(`http://localhost:8080/api/student/${students[i].student_id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: pokemons[i].name,
-          last_name: pokemons[i].last_name,
-          age: pokemons[i].age,          
-          present: h
-        })          
-      })                 
-    }
-    fetchCheck(); 
-    callOmegaHook();     
-  }
-
-  function updateUser(i, Xfirstname, Xlastname, Xage, Ypresent){    
-/*     let omega = Math.floor(Math.random()* 10000000000); */
-    async function fetchUpdate(){
-      const resp = await fetch(`http://localhost:8080/api/student/${pokemons[i].student_id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: Xfirstname,
-          last_name: Xlastname,
-          age: Xage,          
-          present: Ypresent
-        })          
+          name: name,
+          last_name: lastName,
+          age: age,
+          present: present
+        })
       })
-      if(resp.status===200){
-        callOmegaHook();
-      }else{
+      if (resp.status === 200) {
+
+      } else {
         alert("Fail to update, check your input")
-      }                    
+      }
     }
-    fetchUpdate();  
+    fetchUpdate();
+  }
+
+  function removePokemon(i) {
+    async function fetchDel() {
+      const resp = await fetch(`http://localhost:8080/api/student/${students[i].student_id}`, {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' }
+      })
+      if (resp.ok) {
+
+      }
+    }
+    fetchDel();
   }
 
   return (
-        <div>
-        <Printa 
-        poke={pokemons}
-        removePokemon = {removePokemon}
-        addUser = {addUser}
-        checkBoxChanged = {checkBoxChanged}
-        updateUser = {updateUser}
-        />        
-      </div>  
+    <>
+    {
+      viewSwitch?
+      <StudentsList switchView={switchView}/>:
+      <EditStudent switchView={switchView}/>
+    }
+    </>
   )
- 
 }
 
 export default App;
